@@ -12,4 +12,11 @@ class HomeController extends Controller
             'title' => 'SNF bot'
         ]);
     }
+
+    public function registration()
+    {
+        return $this->render('registration', [
+            'title' => 'SNF bot | Registrace'
+        ]);
+    }
 }

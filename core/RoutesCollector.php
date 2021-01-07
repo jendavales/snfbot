@@ -10,6 +10,7 @@ class RoutesCollector
     {
         return [
             'home' => new Route('/', Request::METHOD_GET, HomeController::class, 'home'),
+            'registration' => new Route('/registration', Request::METHOD_GET, HomeController::class, 'registration'),
         ];
     }
 }

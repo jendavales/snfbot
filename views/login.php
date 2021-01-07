@@ -8,7 +8,7 @@
         <input type="password" id="inputPassword" class="form-control" placeholder="Heslo" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Přihlásit</button>
         <hr>
-        <a href="registration">Nový účet</a>
+        <a href="<?php echo \core\Application::$app->router->generateUrl('registration') ?>">Nový účet</a>
         <p class="mt-5 mb-3 text-muted">&copy; 2021 Jenda Válec</p>
     </form>
 </body>

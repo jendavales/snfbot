@@ -10,7 +10,7 @@
     <input type="password" id="inputPasswordConfirm" class="form-control" placeholder="Heslo znovu" required>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Registrovat</button>
     <hr>
-    <a href="/snfbot">Přihlášení</a>
+    <a href="<?php echo \core\Application::$app->router->generateUrl('registration') ?>">Přihlášení</a>
     <p class="mt-5 mb-3 text-muted">&copy; 2021 Jenda Válec</p>
 </form>
 </body>

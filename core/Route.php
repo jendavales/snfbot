@@ -30,18 +30,23 @@ class Route
         $this->regex = '~^' . $regex . '$~';
     }
 
-    public function getUrl(array $parameters, bool $absolute = false): string
+    public function getUrl(array $parameters = [], bool $absolute = false): string
     {
         if (count($parameters) !== count($this->getParameters())) {
-            //todo: create exception
             throw new \Exception('Not enough parameters');
         }
 
-        if (!$absolute) {
-            return $this->path;
+        $url = $this->path;
+
+        foreach ($parameters as $name => $value) {
+            $url = str_replace("{$name}", $value, $url);
         }
 
-        return $GLOBALS['params']['server_host'] . $GLOBALS['params']['server_subdirectory'] . $this->path;
+        if (!$absolute) {
+            return $GLOBALS['params']['server_subdirectory'] . $url;
+        }
+
+        return $GLOBALS['params']['server_host'] . $GLOBALS['params']['server_subdirectory'] . $url;
     }
 
     public function getRegex(): string

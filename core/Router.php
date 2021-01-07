@@ -17,9 +17,9 @@ class Router
         $this->routes = RoutesCollector::getRoutes();
     }
 
-    public function generateUrl(string $routeName): string
+    public function generateUrl(string $routeName, array $parameters = [], bool $absolute = false): string
     {
-
+        return $this->routes[$routeName]->getUrl($parameters, $absolute);
     }
 
     public function resolve(): Callback
