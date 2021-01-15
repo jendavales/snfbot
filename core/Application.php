@@ -24,8 +24,11 @@ class Application
     public function run(): void
     {
         $callback = $this->router->resolve();
+        $callback->addParameter('request', $this->request);
+
         $className = $callback->getClass();
         $callableClass = new $className ();
+
         echo call_user_func_array([$callableClass, $callback->getFunctionName()], $this->getOrderedParams($callback));
     }
 

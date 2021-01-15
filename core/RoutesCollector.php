@@ -9,8 +9,8 @@ class RoutesCollector
     public static function getRoutes(): array
     {
         return [
-            'home' => new Route('/', Request::METHOD_GET, HomeController::class, 'home'),
-            'registration' => new Route('/registration', Request::METHOD_GET, HomeController::class, 'registration'),
+            'home' => new Route('/', [Request::METHOD_GET], HomeController::class, 'home'),
+            'registration' => new Route('/registration', [Request::METHOD_GET, Request::METHOD_POST], HomeController::class, 'registration'),
         ];
     }
 }

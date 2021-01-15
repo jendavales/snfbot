@@ -5,21 +5,21 @@ namespace core;
 class Route
 {
     private $path;
-    private $method;
+    private $methods;
     private $controller;
     private $functionName;
     private $parameters;
     private $regex;
 
-    public function __construct(string $path, string $method, string $controller, string $function)
+    public function __construct(string $path, array $methods, string $controller, string $function)
     {
         $this->path = $path;
         $this->controller = $controller;
         $this->functionName = $function;
-        $this->method = $method;
+        $this->methods = $methods;
         $this->parameters = [];
 
-        $count = preg_match_all('/{([a-zA-Z]*)}/', $path, $variableNames);
+        $count = preg_match_all('/{([0-9a-zA-Z]*)}/', $path, $variableNames);
         $regex = $path;
 
         for ($i = 0; $i < $count; $i++) {
@@ -62,5 +62,10 @@ class Route
     public function getCallback(): Callback
     {
         return new Callback($this->controller, $this->functionName);
+    }
+
+    public function hasMethod(string $method)
+    {
+        return in_array($method, $this->methods);
     }
 }

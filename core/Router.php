@@ -41,7 +41,7 @@ class Router
         $pathNoQuery = $this->getPathNoQuery($path);
 
         foreach ($this->routes as $route) {
-            if (preg_match_all($route->getRegex(), $pathNoQuery, $parameters)) {
+            if (preg_match_all($route->getRegex(), $pathNoQuery, $parameters) && $route->hasMethod($method)) {
                 $callback = $route->getCallback();
                 if (count($parameters) === 1) {
                     return $callback;
