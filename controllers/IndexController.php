@@ -69,6 +69,7 @@ class IndexController extends Controller
     public function logout(Request $request)
     {
         Application::$app->logout();
+        Application::$app->session->setFlash(Session::FLASH_SUCCESS, 'Odhlášení bylo úspěšné.');
         Application::$app->response->redirect('login');
     }
 }

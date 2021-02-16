@@ -37,7 +37,6 @@ class Route
         }
 
         $url = $this->path;
-
         foreach ($parameters as $name => $value) {
             $url = str_replace("{$name}", $value, $url);
         }

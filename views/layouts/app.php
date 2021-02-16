@@ -24,7 +24,7 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item" href="pages-profile.html"><i class="far fa-user mr-2"></i>Účet</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt mr-2"></i>Odhlásit</a>
+                <a class="dropdown-item" href="<?php echo \core\Application::$app->router->generateUrl('logout') ?>"><i class="fas fa-sign-out-alt mr-2"></i>Odhlásit</a>
             </div>
         </li>
     </ul>
