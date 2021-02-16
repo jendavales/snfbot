@@ -65,4 +65,10 @@ class IndexController extends Controller
             'registrationForm' => $registrationForm
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        Application::$app->logout();
+        Application::$app->response->redirect('login');
+    }
 }

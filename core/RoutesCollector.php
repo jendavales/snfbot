@@ -13,6 +13,7 @@ class RoutesCollector
             'login' => new Route('/', [Request::METHOD_GET, Request::METHOD_POST], IndexController::class, 'home'),
             'registration' => new Route('/registration', [Request::METHOD_GET, Request::METHOD_POST], IndexController::class, 'registration'),
             'home' => new Route('/home', [Request::METHOD_GET, Request::METHOD_POST], HomeController::class, 'home'),
+            'logout' => new Route('/logout', [Request::METHOD_GET], IndexController::class, 'logout'),
         ];
     }
 }
