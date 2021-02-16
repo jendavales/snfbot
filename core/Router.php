@@ -2,7 +2,7 @@
 
 namespace core;
 
-use controllers\HomeController;
+use controllers\IndexController;
 
 class Router
 {

@@ -1,6 +1,8 @@
 <?php
 
-namespace core\ValidationRules;
+namespace core;
+
+use core\Form;
 
 abstract class Rule
 {
@@ -13,7 +15,7 @@ abstract class Rule
         $this->customMessage = $customMessage;
     }
 
-    public abstract function isValid(\core\Model $model): bool;
+    public abstract function isValid(Form $form): bool;
 
     public abstract function getDefaultErrorMessage(): string;
 

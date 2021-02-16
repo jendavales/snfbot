@@ -2,7 +2,7 @@
 
 $GLOBALS["params"] = [
     'db_server' => 'localhost',
-    'db_login' => 'admin',
+    'db_login' => 'root',
     'db_password' => '',
     'db_name' => 'snfbot',
     'server_subdirectory' => '/snfbot',

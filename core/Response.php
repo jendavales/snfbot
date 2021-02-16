@@ -9,9 +9,10 @@ class Response
         http_response_code($code);
     }
 
-    public function redirect(string $routeName)
+    public function redirect(string $routeName, array $params = [])
     {
-        $url = Application::$app->router->resolve();
-        header("Location: ");
+        $url = Application::$app->router->generateUrl($routeName, $params);
+        header("Location: $url");
+        exit;
     }
 }

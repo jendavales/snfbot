@@ -2,7 +2,7 @@
 
 namespace core;
 
-use controllers\HomeController;
+use controllers\IndexController;
 
 class Application
 {
@@ -11,14 +11,20 @@ class Application
     public $request;
     public $response;
     public $rootPath;
+    public $database;
+    public $session;
+    public $user;
 
     public function __construct(string $rootPath)
     {
         self::$app = $this;
+        $this->database = new Database($GLOBALS['params']['db_server'], $GLOBALS['params']['db_name'], $GLOBALS['params']['db_login'], $GLOBALS['params']['db_password']);
         $this->request = new Request();
         $this->response = new Response();
         $this->router = new Router($this->request);
+        $this->session = new Session();
         $this->rootPath = $rootPath;
+        $this->user = null;
     }
 
     public function run(): void
@@ -42,5 +48,21 @@ class Application
         }
 
         return $orderedParams;
+    }
+
+    public function login(DbModel $user)
+    {
+        $this->user = $user;
+        foreach ($user->primaryKeys() as $primaryKey) {
+            $primaryValues[] = $user->{$primaryKey};
+        }
+        $primaryValue = implode(',', $primaryValues);
+        $this->session->set('user', $primaryValue);
+    }
+
+    public function logout()
+    {
+        $this->user = null;
+        self::$app->session->remove('user');
     }
 }

@@ -6,31 +6,17 @@ use core\ValidationRules\Rule;
 
 abstract class Model
 {
-    public $errors;
-
-    abstract public function rules(): array;
-
-    public function loadData(array $data): void
+    public function __construct(array $variables = [])
     {
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
-            }
-        }
+        $this->loadPropertiesFromArray($variables);
     }
 
-    public function validate(): bool
+    public function loadPropertiesFromArray(array $variables = [])
     {
-        $this->errors = [];
-
-        /** @var Rule $rule */
-        foreach ($this->rules() as $rule) {
-            if (!$rule->isValid($this)) {
-                $this->errors[$rule->attribute][] = $rule->getErrorMessage($this);
+        foreach ($variables as $key => $variable) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $variable;
             }
-
         }
-
-        return count($this->errors) === 0;
     }
 }
