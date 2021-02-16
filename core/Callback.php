@@ -4,20 +4,20 @@ namespace core;
 
 class Callback
 {
-    private $class;
+    private $controller;
     private $functionName;
     private $parameters;
 
     public function __construct(string $class, string $functionName, array $parameters = [])
     {
-        $this->class = $class;
+        $this->controller = new $class();
         $this->functionName = $functionName;
         $this->parameters = $parameters;
     }
 
-    public function getClass(): string
+    public function getController(): Controller
     {
-        return $this->class;
+        return $this->controller;
     }
 
     public function getFunctionName(): string

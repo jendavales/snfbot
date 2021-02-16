@@ -12,6 +12,18 @@
 </head>
 <body class="content">
 <div class="container">
+    <?php foreach (\core\Application::$app->session->getFlashMessages(\core\Session::FLASH_FAILURE) as $message): ?>
+        <div class="alert alert-danger">
+            <?php echo $message ?>
+        </div>
+    <?php endforeach; ?>
+
+    <?php foreach (\core\Application::$app->session->getFlashMessages(\core\Session::FLASH_WARNING) as $message): ?>
+        <div class="alert alert-warning">
+            <?php echo $message ?>
+        </div>
+    <?php endforeach; ?>
+
     <?php foreach (\core\Application::$app->session->getFlashMessages(\core\Session::FLASH_SUCCESS) as $message): ?>
         <div class="alert alert-success">
             <?php echo $message ?>

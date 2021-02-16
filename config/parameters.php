@@ -6,5 +6,6 @@ $GLOBALS["params"] = [
     'db_password' => '',
     'db_name' => 'snfbot',
     'server_subdirectory' => '/snfbot',
-    'server_host' => 'localhost'
+    'server_host' => 'localhost',
+    'userClass' => \Models\User::class
 ];
