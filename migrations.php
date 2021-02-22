@@ -23,7 +23,7 @@ foreach ($filesToBeApplied as $migration) {
     $newMigrations[] = $migration;
 }
 
-saveNewMigrations($newMigrations, $db);
+saveNewMigrations($newMigrations, $db, $shouldDoAll);
 
 function loadCompletedMigrations(\core\Database $db): array
 {
@@ -49,21 +49,27 @@ function processMigration(string $migration, \core\Database $db, bool $shouldDoA
     $instance = new $className();
 
     if ($shouldDoAll) {
+        echo 'Dropping ' . $migration . PHP_EOL;
+        $db->pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
         $instance->drop($db);
-        echo 'Dropping '.$migration.PHP_EOL;
+        $db->pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
     }
 
+    echo 'Migrating ' . $migration . PHP_EOL;
     $instance->init($db);
-    echo 'Migrating '.$migration.PHP_EOL;
 
     if ($shouldSeed) {
         $instance->seed($db);
-        echo 'Seeding '.$migration.PHP_EOL;
+        echo 'Seeding ' . $migration . PHP_EOL;
     }
 }
 
-function saveNewMigrations(array $migrations, \core\Database $db): void
+function saveNewMigrations(array $migrations, \core\Database $db, bool $deleteOld = false): void
 {
+    if ($deleteOld) {
+        $query = $db->pdo->exec('DELETE FROM migrations');
+    }
+
     $query = $db->pdo->prepare('INSERT INTO migrations (migration) VALUES (:migration)');
 
     foreach ($migrations as $migration) {

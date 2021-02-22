@@ -4,11 +4,11 @@ namespace core;
 
 abstract class DbModel extends Model
 {
-    abstract public function tableName(): string;
+    public static abstract function tableName(): string;
 
-    abstract public function dbAttributes(): array;
+    abstract public static function dbAttributes(): array;
 
-    abstract public function primaryKeys(): array;
+    abstract public static function primaryKeys(): array;
 
     public function insert(): void
     {
@@ -35,7 +35,7 @@ abstract class DbModel extends Model
 
     public function update(): void
     {
-        $tableName = $this->tableName();
+        $tableName = static::tableName();
 
         $setValues = [];
         foreach ($this->dbAttributes() as $attribute) {
@@ -56,7 +56,7 @@ abstract class DbModel extends Model
     public function fetch(array $fetchBy = [], array $additionalFields = ['id']): void
     {
         $selectParams = array_merge($additionalFields, $this->dbAttributes());
-        $tableName = $this->tableName();
+        $tableName = static::tableName();
 
         if (empty($fetchBy)) {
             $id = $this->id;
@@ -80,5 +80,32 @@ abstract class DbModel extends Model
         foreach ($result as $key => $value) {
             $this->{$key} = $value;
         }
+    }
+
+    public static function fetchAll(array $fetchBy, array $additionalFields = ['id']): array
+    {
+        $selectParams = array_merge(static::dbAttributes(), $additionalFields);
+        $tableName = static::tableName();
+
+        $conditions = [];
+        foreach ($fetchBy as $key => $value) {
+            $conditions[] = "$key = \"$value\"";
+        }
+
+        $whereCond = "WHERE " . implode(' and ', $conditions);
+
+        $sql = "SELECT " . implode(', ', $selectParams) . " FROM $tableName " . $whereCond;
+        $results = Application::$app->database->pdo->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+
+        if ($results === false) {
+            return [];
+        }
+
+        $return = [];
+        foreach ($results as $result) {
+            $return[] = new static($result);
+        }
+
+        return $return;
     }
 }

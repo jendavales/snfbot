@@ -2,9 +2,9 @@
 
 namespace controllers;
 
-use core\Application;
 use core\Controller;
 use Middlewares\LoginMiddleware;
+use Models\Account;
 
 class HomeController extends Controller
 {
@@ -16,8 +16,11 @@ class HomeController extends Controller
 
     public function home()
     {
+        $accounts = Account::fetchAll(['user' => 1]);
+
         return $this->render('home', [
-            'title' => 'SNF bot'
+            'title' => 'SNF bot',
+            'accounts' => $accounts
         ], 'layouts/app');
     }
 }

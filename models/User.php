@@ -14,17 +14,17 @@ class User extends DbModel
     public $email;
     public $password;
 
-    public function tableName(): string
+    public static function tableName(): string
     {
-        return 'users';
+        return 'snf_users';
     }
 
-    public function dbAttributes(): array
+    public static function dbAttributes(): array
     {
         return ['email'];
     }
 
-    public function primaryKeys(): array
+    public static function primaryKeys(): array
     {
         return ['id'];
     }
