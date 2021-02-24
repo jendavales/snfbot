@@ -5,6 +5,7 @@ namespace controllers;
 use core\Controller;
 use Middlewares\LoginMiddleware;
 use Models\Account;
+use Models\Profile;
 
 class HomeController extends Controller
 {
@@ -20,7 +21,8 @@ class HomeController extends Controller
 
         return $this->render('home', [
             'title' => 'SNF bot',
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'profiles' => Profile::fetchAll(['user' => 1]),
         ], 'layouts/app');
     }
 }

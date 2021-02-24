@@ -14,7 +14,7 @@ class m0011_profiles
 
     public function seed(\core\Database $db): void
     {
-        $profiles = [['name' => 'profile1', 'user' =>1]];
+        $profiles = [['name' => 'profile1', 'user' => 1], ['name' => 'profile2', 'user' => 1]];
         $query = $db->pdo->prepare("INSERT INTO snf_profiles (name, user) VALUES (:name, :user)");
 
         foreach ($profiles as $profile) {

@@ -6,6 +6,8 @@ use core\DbModel;
 
 class Profile extends DbModel
 {
+    public const MAX_ADVENTURES = 60;
+
     public $id;
     public $name;
     public $user;
