@@ -10,9 +10,12 @@ use core\ValidationRules\SameAsRule;
 
 class User extends DbModel
 {
+    public const DEFAULT_ACCOUNTS_LIMIT = 5;
+
     public $id;
     public $email;
     public $password;
+    public $accountsLimit;
 
     public static function tableName(): string
     {
@@ -21,7 +24,7 @@ class User extends DbModel
 
     public static function dbAttributes(): array
     {
-        return ['email'];
+        return ['email', 'accountsLimit'];
     }
 
     public static function primaryKeys(): array

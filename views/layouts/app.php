@@ -20,7 +20,7 @@
 
     <ul class="navbar-nav align-items-center ml-auto">
         <li class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><span class="text-dark">jenda</span></a>
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><span class="text-dark"><?php echo $user->email ?></span></a>
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item" href="pages-profile.html"><i class="far fa-user mr-2"></i>Účet</a>
                 <div class="dropdown-divider"></div>

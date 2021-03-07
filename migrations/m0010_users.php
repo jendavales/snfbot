@@ -7,6 +7,7 @@ class m0010_users
         $db->pdo->exec("CREATE TABLE snf_users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             email VARCHAR(80) NOT NULL,
+            accountsLimit SMALLINT NOT NULL,
             password VARCHAR(512) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )  ENGINE=INNODB;");
@@ -14,13 +15,13 @@ class m0010_users
 
     public function seed(\core\Database $db): void
     {
-        $users = [['email' => 'jenda.vales@seznam.cz', 'password' =>'asdasd']];
-        $query = $db->pdo->prepare("INSERT INTO snf_users (email, password) VALUES (:email, :password)");
+        $users = [
+            ['jenda.vales@seznam.cz', password_hash('asdasd', PASSWORD_DEFAULT), 5],
+        ];
+        $query = $db->pdo->prepare("INSERT INTO snf_users (email, password, accountsLimit) VALUES (?, ?, ?)");
 
         foreach ($users as $user) {
-            $query->bindValue(':email', $user['email']);
-            $query->bindValue(':password', password_hash( $user['password'], PASSWORD_DEFAULT));
-            $query->execute();
+            $query->execute($user);
         }
     }
 
