@@ -9,7 +9,6 @@ use Forms\AddAccountForm;
 use Middlewares\LoginMiddleware;
 use Models\Account;
 use Models\Profile;
-use Models\User;
 
 class HomeController extends Controller
 {

@@ -31,4 +31,9 @@
 </nav>
 {{content}}
 </body>
+<script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/params.js"></script>
+<script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/api.js"></script>
+<script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/router/compiledRoutes.js"></script>
+<script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/router/route.js"></script>
+<script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/router/router.js"></script>
 </html>

@@ -38,7 +38,7 @@ class Route
 
         $url = $this->path;
         foreach ($parameters as $name => $value) {
-            $url = str_replace("{$name}", $value, $url);
+            $url = str_replace('{'.$name.'}', $value, $url);
         }
 
         if (!$absolute) {
@@ -63,8 +63,16 @@ class Route
         return new Callback($this->controller, $this->functionName);
     }
 
-    public function hasMethod(string $method)
+    public function hasMethod(string $method): bool
     {
         return in_array($method, $this->methods);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'regex' => $this->getRegex(),
+            'path' => $this->path
+        ];
     }
 }

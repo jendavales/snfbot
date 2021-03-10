@@ -4,6 +4,7 @@ namespace core;
 
 use controllers\HomeController;
 use controllers\IndexController;
+use controllers\ProfilesController;
 
 class RoutesCollector
 {

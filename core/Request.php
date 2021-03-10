@@ -42,16 +42,29 @@ class Request
     public function getBody(): array
     {
         $data = [];
+
         if ($this->isGet()) {
             foreach ($_GET as $key => $value) {
                 $data[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
             }
+
+            return $data;
         }
-        if ($this->isPost()) {
+
+        if ($this->isPost() && $_SERVER['CONTENT_TYPE'] === 'application/json') {
+            $_POST = json_decode(file_get_contents('php://input'), true);
             foreach ($_POST as $key => $value) {
-                $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                $data[$key] = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS);
             }
+
+            return $data;
         }
+
+        //ASSUME IS NON-JSON POST
+        foreach ($_POST as $key => $value) {
+            $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+        }
+
         return $data;
     }
 }

@@ -8,7 +8,8 @@
                             účtů: <?php echo count($accounts) . '/' . $user->accountsLimit ?></div>
                     </div>
                     <div class="col-auto ml-auto">
-                        <button class="btn btn-warning">Spravovat profily</button>
+                        <button class="btn btn-warning" data-toggle="modal" data-target="#profilesModal">Spravovat profily
+                        </button>
                         <button class="btn btn-success" data-toggle="modal" data-target="#addAccountModal">Přidat účet
                         </button>
                     </div>
@@ -84,12 +85,13 @@
                             <div class="d-flex justify-content-center">
                                 <div class="btn-group w-100 mb-4" role="group" aria-label="Basic example">
                                     <button type="button" class="btn btn-sm btn-primary">Přidat existující účet</button>
-                                    <button type="button" class="btn btn-sm btn-outline-primary" disabled>Registrace nových
+                                    <button type="button" class="btn btn-sm btn-outline-primary" disabled>Registrace
+                                        nových
                                         účtů
                                     </button>
                                 </div>
                             </div>
-<!--                            TODO: check account limit-->
+                            <!--                            TODO: check account limit-->
                             <form id="addAccountForm"
                                   action="<?php echo \core\Application::$app->router->generateUrl('addAccount') ?>"
                                   method="POST">
@@ -114,7 +116,89 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" tabindex="-1" role="dialog" id="profilesModal">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Spravovat profily</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-6 m-auto d-flex">
+                                <select class="form-control">
+                                    <?php foreach ($profiles as $profile): ?>
+                                        <option value="<? echo $profile->name ?>"><?php echo $profile->name ?></option>
+                                    <?php endforeach; ?>
+                                    <!--                                    TODO: add constant-->
+                                    <option value="new">Založit nový</option>
+                                </select>
+                                <button class="ml-2 btn btn-success"><i class="fas fa-save"></i></button>
+                            </div>
+                            <div class="mt-3 pl-5 pr-5">
+                                <form id="profileEdit">
+                                    <input type="hidden" name="profile_id">
+                                    <div class="form-group row">
+                                        <label for="profile_name" class="col-sm-2 col-form-label">Název</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="profile_name">
+                                        </div>
+                                    </div>
+                                    <div class="form-check custom-checkbox">
+                                        <input type="checkbox" class="form-check-input" id="profile_quests">
+                                        <label class="form-check-label" for="profile_quests">Plnit Questy</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile_xp">Hodnota XP</label>
+                                        <input type="range" class="form-control-range" id="profile_xp">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile_gold">Hodnota Goldů</label>
+                                        <input type="range" class="form-control-range" id="profile_gold">
+                                    </div>
+                                    <div class="form-check custom-checkbox">
+                                        <input type="checkbox" class="form-check-input" id="profile_items" name="profile_items">
+                                        <label class="form-check-label" for="profile_items">Měnit itemy</label>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="profile_itemsTreat" class="col-sm-2 col-form-label">Staré itemy</label>
+                                        <select class="form-control col-sm-10" id="profile_itemsTreat">
+                                            <option value="keep">Smazat</option>
+                                            <option value="delete">Uložit</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile_sleep">Hodnota "Sleep"</label>
+                                        <input type="range" class="form-control-range" id="profile_sleep">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile_sun">Hodnota "Sun Resistance"</label>
+                                        <input type="range" class="form-control-range" id="profile_sun">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile_greed">Hodnota "Greed"</label>
+                                        <input type="range" class="form-control-range" id="profile_greed">
+                                    </div>
+                                    <div class="form-check custom-checkbox">
+                                        <input type="checkbox" class="form-check-input" name="profile_adventures" id="profile_adventures">
+                                        <label class="form-check-label" for="profile_adventures">Plnit Adventures</label>
+                                    </div>
+                                    <div class="form-check custom-checkbox">
+                                        <input type="checkbox" class="form-check-input" name="profile_dinos" id="profile_dinos">
+                                        <label class="form-check-label" for="profile_dinos">Vylepšovat Dinosaury</label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
 <script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/addAccount.js"></script>
+<script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/editProfiles.js"></script>
