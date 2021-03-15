@@ -27,6 +27,7 @@ class HomeController extends Controller
             'title' => 'SNF bot',
             'accounts' => $accounts,
             'profiles' => Profile::fetchAll(['user' => $user->id]),
+            'emptyProfile' => Profile::createEmpty(),
             'user' => $user,
         ], 'layouts/app');
     }

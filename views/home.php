@@ -8,7 +8,8 @@
                             účtů: <?php echo count($accounts) . '/' . $user->accountsLimit ?></div>
                     </div>
                     <div class="col-auto ml-auto">
-                        <button class="btn btn-warning" data-toggle="modal" data-target="#profilesModal">Spravovat profily
+                        <button class="btn btn-warning" data-toggle="modal" data-target="#profilesModal">Spravovat
+                            profily
                         </button>
                         <button class="btn btn-success" data-toggle="modal" data-target="#addAccountModal">Přidat účet
                         </button>
@@ -63,8 +64,9 @@
                                             </div>
                                         </div>
                                         <div class="col-auto ml-auto"><i
-                                                    class="fas fa-map-marked-alt mt-4"></i> <?php echo $account->adventures ?>
-                                            /<?php echo \Models\Profile::MAX_ADVENTURES ?></div>
+                                                    class="fas fa-map-marked-alt mt-4"></i>
+                                            <span><?php echo $account->adventures ?>/<?php echo \Models\Profile::MAX_ADVENTURES ?></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -127,66 +129,97 @@
                         </div>
                         <div class="modal-body">
                             <div class="col-md-6 m-auto d-flex">
-                                <select class="form-control">
-                                    <?php foreach ($profiles as $profile): ?>
-                                        <option value="<? echo $profile->name ?>"><?php echo $profile->name ?></option>
-                                    <?php endforeach; ?>
+                                <select class="form-control" id="profileSelect">
+                                    <div id="profileSelect_options">
+                                        <?php foreach ($profiles as $profile): ?>
+                                            <option data-settings='<?php echo json_encode($profile->toArray()) ?>'
+                                                    value="<?php echo $profile->id ?>"
+                                                    id="profileOption_<?php echo $profile->id ?>"><?php echo $profile->name ?></option>
+                                        <?php endforeach; ?>
+                                    </div>
                                     <!--                                    TODO: add constant-->
-                                    <option value="new">Založit nový</option>
+                                    <option value="new"
+                                            data-settings='<?php echo json_encode($emptyProfile->toArray($emptyProfile->dbAttributes())) ?>'
+                                            id="profileOption_new"
+                                    >Založit nový
+                                    </option>
                                 </select>
-                                <button class="ml-2 btn btn-success"><i class="fas fa-save"></i></button>
+                                <button class="ml-2 btn btn-success" id="saveProfileButton"><i class="fas fa-save"></i></button>
                             </div>
-                            <div class="mt-3 pl-5 pr-5">
+                            <div class="mt-3 pl-3 pr-3">
                                 <form id="profileEdit">
-                                    <input type="hidden" name="profile_id">
+                                    <input type="hidden" id="profile_id">
                                     <div class="form-group row">
-                                        <label for="profile_name" class="col-sm-2 col-form-label">Název</label>
+                                        <label for="profile_name" class="col-sm-2 col-form-label col-form-label-md">Název</label>
                                         <div class="col-sm-10">
                                             <input type="text" class="form-control" id="profile_name">
                                         </div>
                                     </div>
                                     <div class="form-check custom-checkbox">
-                                        <input type="checkbox" class="form-check-input" id="profile_quests">
-                                        <label class="form-check-label" for="profile_quests">Plnit Questy</label>
+                                        <input type="checkbox" class="form-check-input form-check-input-md"
+                                               id="profile_quests">
+                                        <label class="form-check-label form-check-label-md" for="profile_quests">Plnit
+                                            Questy</label>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="profile_xp">Hodnota XP</label>
-                                        <input type="range" class="form-control-range" id="profile_xp">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="profile_gold">Hodnota Goldů</label>
-                                        <input type="range" class="form-control-range" id="profile_gold">
-                                    </div>
-                                    <div class="form-check custom-checkbox">
-                                        <input type="checkbox" class="form-check-input" id="profile_items" name="profile_items">
-                                        <label class="form-check-label" for="profile_items">Měnit itemy</label>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="profile_itemsTreat" class="col-sm-2 col-form-label">Staré itemy</label>
-                                        <select class="form-control col-sm-10" id="profile_itemsTreat">
-                                            <option value="keep">Smazat</option>
-                                            <option value="delete">Uložit</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="profile_sleep">Hodnota "Sleep"</label>
-                                        <input type="range" class="form-control-range" id="profile_sleep">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="profile_sun">Hodnota "Sun Resistance"</label>
-                                        <input type="range" class="form-control-range" id="profile_sun">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="profile_greed">Hodnota "Greed"</label>
-                                        <input type="range" class="form-control-range" id="profile_greed">
+                                    <div class="pr-4 pl-4 mt-1" id="profileSection_quests">
+                                        <div class="form-group">
+                                            <label for="profile_quests_xp">Hodnota XP</label>
+                                            <input type="range" class="form-control-range" id="profile_quests_xp">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="profile_quests_gold">Hodnota Goldů</label>
+                                            <input type="range" class="form-control-range" id="profile_quests_gold">
+                                        </div>
                                     </div>
                                     <div class="form-check custom-checkbox">
-                                        <input type="checkbox" class="form-check-input" name="profile_adventures" id="profile_adventures">
-                                        <label class="form-check-label" for="profile_adventures">Plnit Adventures</label>
+                                        <input type="checkbox" class="form-check-input form-check-input-md"
+                                               id="profile_items"
+                                               name="profile_items">
+                                        <label class="form-check-label form-check-label-md" for="profile_items">Měnit
+                                            itemy</label>
+                                    </div>
+                                    <div class="pr-4 pl-4 mt-1" id="profileSection_items">
+                                        <div class="form-group row">
+                                            <label for="profile_items_action" class="col-sm-2 col-form-label">Staré
+                                                itemy</label>
+                                            <select class="form-control col-sm-4" id="profile_items_action">
+                                                <option value="<?php echo \Models\Profile::ITEM_ACTION_DELETE ?>">
+                                                    Smazat
+                                                </option>
+                                                <option value="<?php echo \Models\Profile::ITEM_ACTION_STORE ?>">
+                                                    Uložit
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="profile_items_speed">Hodnota "Speed"</label>
+                                            <input type="range" class="form-control-range" id="profile_items_speed">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="profile_items_sunProtection">Hodnota "Sun Resistance"</label>
+                                            <input type="range" class="form-control-range"
+                                                   id="profile_items_sunProtection">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="profile_items_greed">Hodnota "Greed"</label>
+                                            <input type="range" class="form-control-range" id="profile_items_greed">
+                                        </div>
                                     </div>
                                     <div class="form-check custom-checkbox">
-                                        <input type="checkbox" class="form-check-input" name="profile_dinos" id="profile_dinos">
-                                        <label class="form-check-label" for="profile_dinos">Vylepšovat Dinosaury</label>
+                                        <input type="checkbox" class="form-check-input form-check-input-md"
+                                               name="profile_adventures"
+                                               id="profile_adventures">
+                                        <label class="form-check-label form-check-label-md" for="profile_adventures">Plnit
+                                            Adventures</label>
+                                    </div>
+                                    <div class="pr-4 pl-4 mt-1" id="profileSection_adventures">
+                                        <div class="form-check custom-checkbox">
+                                            <input type="checkbox" class="form-check-input"
+                                                   name="profile_adventures_dinos"
+                                                   id="profile_adventures_dinos">
+                                            <label class="form-check-label" for="profile_adventures_dinos">Vylepšovat
+                                                Dinosaury</label>
+                                        </div>
                                     </div>
                                 </form>
                             </div>

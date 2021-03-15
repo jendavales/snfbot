@@ -6,7 +6,17 @@ class m0011_profiles
     {
         $db->pdo->exec("CREATE TABLE snf_profiles (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(14) NOT NULL,
+            name TEXT(128),
+            quests tinyint(1),
+            items tinyint(1),
+            items_action tinyint(3),
+            items_speed tinyint(3),
+            items_sunProtection tinyint(3),
+            items_greed tinyint(3),
+            quests_gold tinyint(3),
+            quests_xp tinyint(3),
+            adventures tinyint(1),
+            adventures_dinos tinyint(1),
             user INT NOT NULL,
             CONSTRAINT fk_profiles_user FOREIGN KEY (user) REFERENCES snf_users(id) ON DELETE CASCADE
         )  ENGINE=INNODB;");
@@ -14,13 +24,22 @@ class m0011_profiles
 
     public function seed(\core\Database $db): void
     {
-        $profiles = [['name' => 'profile1', 'user' => 1], ['name' => 'profile2', 'user' => 1]];
-        $query = $db->pdo->prepare("INSERT INTO snf_profiles (name, user) VALUES (:name, :user)");
+        $profiles = [
+            \Models\Profile::createDefaultXp(),
+            \Models\Profile::createDefaultGold(),
+        ];
 
+        $query = $db->pdo->prepare("
+            INSERT INTO snf_profiles
+                (name, user, items, items_action, items_speed, items_sunProtection, items_greed, quests, quests_xp, quests_gold, adventures, adventures_dinos)
+            VALUES 
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+
+        /** @var \Models\Profile $profile */
         foreach ($profiles as $profile) {
-            $query->bindValue(':name', $profile['name']);
-            $query->bindValue(':user', $profile['user']);
-            $query->execute();
+            $profile->user = 1;
+            $query->execute(array_values($profile->toArray($profile->dbAttributes())));
         }
     }
 

@@ -19,4 +19,19 @@ abstract class Model
             }
         }
     }
+
+    public function toArray(array $attributes = []): array
+    {
+        $return = [];
+
+        if (count($attributes) === 0) {
+            return get_object_vars($this);
+        }
+
+        foreach ($attributes as $key) {
+            $return[$key] = $this->{$key};
+        }
+
+        return $return;
+    }
 }
