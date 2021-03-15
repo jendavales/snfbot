@@ -3,11 +3,11 @@ body {
     font-family: 'Nunito', sans-serif;
     height: 100%;
     background-color: #f5f5f5;
-    color: #6c757d;
+    color: #586169;
 }
 
 h5 {
-    color: rgb(108, 117, 125);
+    color: #586169;
     font-weight: 700;
     font-size: 14.4px;
     text-size-adjust: 100%;
@@ -65,7 +65,16 @@ h5 {
     z-index: 1;
 }
 
-@keyframes dropdownAnimation{0%{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dropdownAnimation {
+    0% {
+        opacity: 0;
+        transform: translateY(-8px)
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
 
 .dropdown .dropdown-menu.show {
     animation-name: dropdownAnimation;
@@ -85,4 +94,34 @@ h5 {
     left: 50%;
     transform: translate(-50%, -50%);
     height: 100%;
+}
+
+.form-check-input-md {
+    width: 16px;
+    height: 16px;
+}
+
+.form-check-label-md, .col-form-label-md {
+    font-size: 19px;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+.page-loading {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.4);
+    top: 0;
+    align-items: center;
+    justify-content: center;
+    display: none;
+    z-index: 10000;
+}
+
+.page-loading.loading {
+    display: flex;
 }

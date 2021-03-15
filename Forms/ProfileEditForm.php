@@ -8,6 +8,8 @@ use Forms\ValidationRules\RequiredRule;
 
 class ProfileEditForm extends Form
 {
+    public const NEW_PROFILE_VALUE = 'new';
+
     public $id;
     public $name;
     public $quests;

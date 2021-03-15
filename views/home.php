@@ -137,8 +137,7 @@
                                                     id="profileOption_<?php echo $profile->id ?>"><?php echo $profile->name ?></option>
                                         <?php endforeach; ?>
                                     </div>
-                                    <!--                                    TODO: add constant-->
-                                    <option value="new"
+                                    <option value="<?php echo \Forms\ProfileEditForm::NEW_PROFILE_VALUE ?>"
                                             data-settings='<?php echo json_encode($emptyProfile->toArray($emptyProfile->dbAttributes())) ?>'
                                             id="profileOption_new"
                                     >Založit nový

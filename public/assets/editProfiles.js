@@ -1,8 +1,11 @@
 if (document.getElementById('profilesModal') !== null) {
+    const PROFILE_INPUTS_PREFIX = 'profile_';
+    const PROFILE_OPTIONS_PREFIX = 'profileOption_';
+
     //Bind sections disabling to checkboxes
     let sections = [];
     ['adventures', 'items', 'quests'].forEach((type) => {
-        let input = document.getElementById('profile_' + type);
+        let input = document.getElementById(PROFILE_INPUTS_PREFIX + type);
         let section = document.getElementById('profileSection_' + type);
         sections[type] = section;
         input.addEventListener('change', () => {
@@ -10,15 +13,12 @@ if (document.getElementById('profilesModal') !== null) {
         });
     });
 
+    //Prepare variables
     let profileOptions = loadProfileOptions();
     let profileInputs = loadProfileInputs();
     let profileSelectOptions = document.getElementById('profileSelect_options');
-
-    //Set profile on change
     let profileSelect = document.getElementById('profileSelect');
-    profileSelect.addEventListener('change', function () {
-        loadProfile(this.value);
-    });
+
     loadProfile(profileSelect.value);
 
     //Save button onclick - save
@@ -26,10 +26,15 @@ if (document.getElementById('profilesModal') !== null) {
         saveProfile();
     })
 
+    //Submit profile change with enter - save
     document.getElementById('profileEdit').addEventListener('submit', (e) => {
-       console.log('submit');
-       e.preventDefault();
-       saveProfile();
+        e.preventDefault();
+        saveProfile();
+    });
+
+    //Set profile on change
+    profileSelect.addEventListener('change', function () {
+        loadProfile(this.value);
     });
 
     function saveProfile() {
@@ -53,21 +58,20 @@ if (document.getElementById('profilesModal') !== null) {
             //success, update preloaded settings and options
             let id = JSON.parse(request.responseText).id;
             let option;
-            if (profileInputs['profile_id'].value === 'undefined') {
+            if (profileInputs[PROFILE_INPUTS_PREFIX + 'id'].value === 'undefined') {
                 //create new options
                 option = document.createElement('option');
                 option.value = id;
-                profileInputs['profile_id'].value = id;
-                console.log(profileInputs['profile_id'].value);
+                profileInputs[PROFILE_INPUTS_PREFIX + 'id'].value = id;
+                console.log(profileInputs[PROFILE_INPUTS_PREFIX + 'id'].value);
                 profileSelect.insertBefore(option, profileSelect.lastElementChild);
                 profileSelect.value = id;
-                profileOptions['profileOption_' + id] = option;
+                profileOptions[PROFILE_OPTIONS_PREFIX + id] = option;
             } else {
-                //todo: add constant
-                option = profileOptions['profileOption_' + id];
+                option = profileOptions[PROFILE_OPTIONS_PREFIX + id];
             }
             let settings = createCurrentInputSettings();
-            option.innerHTML = profileInputs['profile_name'].value;
+            option.innerHTML = profileInputs[PROFILE_INPUTS_PREFIX + 'name'].value;
             option.dataset.settings = JSON.stringify(settings);
             console.log(settings);
             pause.stop();
@@ -77,11 +81,11 @@ if (document.getElementById('profilesModal') !== null) {
     }
 
     function loadProfile(optionId) {
-        let settings = JSON.parse(profileOptions['profileOption_' + optionId].dataset.settings);
+        let settings = JSON.parse(profileOptions[PROFILE_OPTIONS_PREFIX + optionId].dataset.settings);
 
         //Set checkboxes
         ['items', 'quests', 'adventures', 'adventures_dinos'].forEach((type) => {
-            profileInputs['profile_' + type].checked = settings[type] === '1';
+            profileInputs[PROFILE_INPUTS_PREFIX + type].checked = settings[type] === '1';
 
             if (type !== 'adventures_dinos') {
                 if (settings[type] === '1') {
@@ -94,27 +98,27 @@ if (document.getElementById('profilesModal') !== null) {
 
         //Set other inputs
         ['name', 'items_greed', 'items_speed', 'items_sunProtection', 'quests_xp', 'quests_gold', 'items_action', 'id'].forEach((type) => {
-            profileInputs['profile_' + type].value = settings[type];
+            profileInputs[PROFILE_INPUTS_PREFIX + type].value = settings[type];
         });
     }
 
     function loadProfileOptions() {
-        let profileSelect = document.querySelectorAll('[id^="profileOption_"]');
+        let profileOptionsNoKeys = document.querySelectorAll('[id^="' + PROFILE_OPTIONS_PREFIX + '"]');
         let profileOptions = [];
 
-        for (let i = 0; i < profileSelect.length; i++) {
-            profileOptions[profileSelect[i].id] = profileSelect[i];
+        for (let i = 0; i < profileOptionsNoKeys.length; i++) {
+            profileOptions[profileOptionsNoKeys[i].id] = profileOptionsNoKeys[i];
         }
 
         return profileOptions;
     }
 
     function loadProfileInputs() {
-        let profileSelect = document.querySelectorAll('[id^="profile_"]');
+        let profileOptionsNoKeys = document.querySelectorAll('[id^="' + PROFILE_INPUTS_PREFIX + '"]');
         let profileOptions = [];
 
-        for (let i = 0; i < profileSelect.length; i++) {
-            profileOptions[profileSelect[i].id] = profileSelect[i];
+        for (let i = 0; i < profileOptionsNoKeys.length; i++) {
+            profileOptions[profileOptionsNoKeys[i].id] = profileOptionsNoKeys[i];
         }
 
         return profileOptions;
@@ -122,8 +126,7 @@ if (document.getElementById('profilesModal') !== null) {
 
     function createCurrentInputSettings() {
         let settings = {};
-        //todo: constant
-        let prefixLength = "profile_".length;
+        let prefixLength = PROFILE_INPUTS_PREFIX.length;
 
         for ([key, element] of Object.entries(profileInputs)) {
             if (element.type === 'checkbox') {
