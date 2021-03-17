@@ -15,11 +15,18 @@ abstract class Form
 
     abstract public function rules(): array;
 
+    public function inputsPrefix(): string
+    {
+        return '';
+    }
+
     public function loadData(array $data): void
     {
+        $inputsPrefix = $this->inputsPrefix();
         foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
+            $keyNoPrefix = substr($key, strlen($inputsPrefix));
+            if (property_exists($this, $keyNoPrefix)) {
+                $this->{$keyNoPrefix} = $value;
             }
         }
     }

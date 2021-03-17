@@ -1,6 +1,7 @@
 <?php
 
 $GLOBALS["params"] = [
+    'env' => 'dev',
     'db_server' => 'localhost',
     'db_login' => 'root',
     'db_password' => '',

@@ -39,7 +39,7 @@ abstract class DbModel extends Model
 
         $setValues = [];
         foreach ($this->dbAttributes() as $attribute) {
-            $setValues[] = "$attribute = " . $this->{$attribute};
+            $setValues[] = "$attribute = \"" . $this->{$attribute}.'"';
         }
 
         $whereValues = [];
@@ -47,7 +47,7 @@ abstract class DbModel extends Model
             $whereValues[] = "$attribute = " . $this->{$attribute};
         }
 
-        $sql = "UPDATE $tableName SET" . implode(',', $setValues) . 'WHERE ' . implode(',', $whereValues);
+        $sql = "UPDATE $tableName SET " . implode(',', $setValues) . ' WHERE ' . implode(',', $whereValues);
         $query = Application::$app->database->pdo->prepare($sql);
 
         $query->execute();

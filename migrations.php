@@ -1,8 +1,6 @@
 <?php
 
-require_once __DIR__ . '/functions.php';
-require_once __DIR__ . '/config/parameters.php';
-require_once __DIR__ . '/core/Database.php';
+require_once 'autoload.php';
 
 $db = new \core\Database($GLOBALS['params']['db_server'], $GLOBALS['params']['db_name'], $GLOBALS['params']['db_login'], $GLOBALS['params']['db_password']);
 

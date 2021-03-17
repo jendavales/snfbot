@@ -4,6 +4,8 @@ namespace core;
 
 class Response
 {
+    public const FORBIDDEN = 403;
+
     public function setStatusCode(int $code): void
     {
         http_response_code($code);

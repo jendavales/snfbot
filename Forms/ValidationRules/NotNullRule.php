@@ -1,19 +1,21 @@
 <?php
 
+
 namespace Forms\ValidationRules;
+
 
 use core\Form;
 use core\Rule;
 
-class RequiredRule extends Rule
+class NotNullRule extends Rule
 {
     public function isValid(Form $form): bool
     {
-        return !empty($form->{$this->attribute});
+        return !is_null($form->{$this->attribute});
     }
 
     public function getDefaultErrorMessage(): string
     {
-        return "Toto pole je povinné.";
+        return "Toto pole nesmí být nulové.";
     }
 }
