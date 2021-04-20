@@ -2,8 +2,6 @@
 
 namespace core;
 
-use controllers\IndexController;
-
 class Application
 {
     public static $app;

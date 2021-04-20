@@ -40,7 +40,10 @@ class Account extends DbModel
     public function fetch(array $fetchBy = [], array $additionalFields = ['id']): void
     {
         parent::fetch($fetchBy, $additionalFields);
+    }
 
+    protected function afterFetch(): void
+    {
         $this->user = new User(['id' => $this->user]);
         $this->user->fetch();
 
@@ -65,4 +68,19 @@ class Account extends DbModel
         return round($this->actualXp / $this->xpNeeded * 100, $decimals);
     }
 
+    public function update(): void
+    {
+        $profile = $this->profile;
+        $user = $this->user;
+        $this->user = is_null($user) ? null : $user->id;
+        $this->profile = is_null($profile) ? null : $profile->id;
+        parent::update();
+        $this->user = $user;
+        $this->profile = $profile;
+    }
+
+    public function getProfile(): Profile
+    {
+        return $this->profile;
+    }
 }

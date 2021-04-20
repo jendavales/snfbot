@@ -5,6 +5,7 @@ if (document.getElementById('addAccountModal') !== null) {
 
     addButton.addEventListener('click', () => {
         if (addAccountOpened) {
+            pause.start();
             addAccountForm.submit();
         } else {
             //Submit registration form

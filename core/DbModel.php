@@ -10,6 +10,10 @@ abstract class DbModel extends Model
 
     abstract public static function primaryKeys(): array;
 
+    protected function afterFetch(): void
+    {
+    }
+
     public function insert(): void
     {
         $tableName = $this->tableName();
@@ -39,7 +43,7 @@ abstract class DbModel extends Model
 
         $setValues = [];
         foreach ($this->dbAttributes() as $attribute) {
-            $setValues[] = "$attribute = \"" . $this->{$attribute}.'"';
+            $setValues[] = "$attribute = \"" . $this->{$attribute} . '"';
         }
 
         $whereValues = [];
@@ -80,6 +84,7 @@ abstract class DbModel extends Model
         foreach ($result as $key => $value) {
             $this->{$key} = $value;
         }
+        $this->afterFetch();
     }
 
     public static function fetchAll(array $fetchBy, array $additionalFields = ['id']): array
@@ -103,7 +108,9 @@ abstract class DbModel extends Model
 
         $return = [];
         foreach ($results as $result) {
-            $return[] = new static($result);
+            $model = new static($result);
+            $model->afterFetch();
+            $return[] = $model;
         }
 
         return $return;
