@@ -7,7 +7,9 @@ use core\Controller;
 use core\Request;
 use core\Response;
 use Forms\ProfileEditForm;
+use Models\Account;
 use Models\Profile;
+use Models\User;
 
 class ProfilesController extends Controller
 {
@@ -28,8 +30,10 @@ class ProfilesController extends Controller
     {
         //CREATE NEW
         if ($profileForm->id === 'undefined') {
-            $profile = new Profile($profileForm->toArray());
-            $profile->user = Application::$app->user->id;
+            $formArray = $profileForm->toArray();
+            $formArray['user'] = new User(['id' => $formArray['user']]);
+            $profile = new Profile($formArray);
+            $profile->user->id = Application::$app->user->id;
             $profile->insert();
             return $profile;
         }
@@ -46,5 +50,31 @@ class ProfilesController extends Controller
         $profile->update();
 
         return $profile;
+    }
+
+    public function setProfile(Request $request) {
+        $data = $request->getBody();
+        if (!array_key_exists('profile', $data) || !array_key_exists('account', $data)) {
+            return null;
+        }
+
+        $account = new Account();
+        $account->fetch(['id' => $data['account']]);
+        if ($account->user->id !== Application::$app->user->id) {
+            return;
+        }
+
+        if ($data['profile'] === Profile::PROFILE_NONE) {
+            $account->profile = null;
+        } else {
+            $profile = new Profile();
+            $profile->fetch(['id' => $data['profile']]);
+            if ($profile->user->id !== Application::$app->user->id) {
+                return;
+            }
+            $account->profile = $profile;
+        }
+
+        $account->update();
     }
 }

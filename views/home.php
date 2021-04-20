@@ -34,11 +34,13 @@
                                             <h5><?php echo "$account->name - $account->level (" . $account->getLevelProgress() . "%)" ?></h5>
                                         </div>
                                         <div class="col-auto ml-auto display-flex">
-                                            <select class="custom-select">
-                                                <option value="<?php echo \Models\Account::PROFILE_NONE ?>"></option>
+                                            <select class="custom-select account-profile"
+                                                    data-account_id="<?php echo $account->id ?>">
+                                                <option value="<?php echo \Models\Profile::PROFILE_NONE ?>"></option>
                                                 <?php /** @var $profile \Models\Profile */ ?>
                                                 <?php foreach ($profiles as $profile): ?>
-                                                    <option value="<?php echo $profile->id ?>"><?php echo $profile->name ?></option>
+                                                    <option <?php if ($account->getProfileId() == $profile->id) echo ' selected = "selected" ' ?>
+                                                            value="<?php echo $profile->id ?>"><?php echo $profile->name ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -143,7 +145,8 @@
                                     >Založit nový
                                     </option>
                                 </select>
-                                <button class="ml-2 btn btn-success" id="saveProfileButton"><i class="fas fa-save"></i></button>
+                                <button class="ml-2 btn btn-success" id="saveProfileButton"><i class="fas fa-save"></i>
+                                </button>
                             </div>
                             <div class="mt-3 pl-3 pr-3">
                                 <form id="profileEdit">
@@ -234,3 +237,4 @@
 </main>
 <script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/addAccount.js"></script>
 <script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/editProfiles.js"></script>
+<script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/setProfile.js"></script>

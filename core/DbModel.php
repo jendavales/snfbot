@@ -43,7 +43,7 @@ abstract class DbModel extends Model
 
         $setValues = [];
         foreach ($this->dbAttributes() as $attribute) {
-            $setValues[] = "$attribute = \"" . $this->{$attribute} . '"';
+            $setValues[] = "$attribute = " . (is_null($this->{$attribute}) ? 'null' : '"' . $this->{$attribute} . '"');
         }
 
         $whereValues = [];

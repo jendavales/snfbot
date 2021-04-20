@@ -6,7 +6,6 @@ use core\DbModel;
 
 class Account extends DbModel
 {
-    public const PROFILE_NONE = 'none';
     private const OUTFLIT_DELIMETER = ';';
 
     public $id;
@@ -82,5 +81,14 @@ class Account extends DbModel
     public function getProfile(): Profile
     {
         return $this->profile;
+    }
+
+    public function getProfileId(): ?int
+    {
+        if (is_null($this->profile)) {
+            return null;
+        }
+
+        return $this->profile->id;
     }
 }

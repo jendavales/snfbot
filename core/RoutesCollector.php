@@ -18,6 +18,7 @@ class RoutesCollector
             'logout' => new Route('/logout', [Request::METHOD_GET], IndexController::class, 'logout'),
             'addAccount' => new Route('/account/add', [Request::METHOD_POST], HomeController::class, 'addAccountAction'),
             'saveProfile' => new Route('/profile/save', [Request::METHOD_POST], ProfilesController::class, 'saveProfile'),
+            'setProfile' => new Route('/profile/set', [Request::METHOD_POST], ProfilesController::class, 'setProfile'),
             'botRun' => new Route('/bot/run', [Request::METHOD_GET], BotController::class, 'runBot')
         ];
     }
