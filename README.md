@@ -19,3 +19,8 @@ After database is setup, run migrations
 - seed puts fake data to each table
 
 In xampp application is accessible from *localhost/snfbot/*
+
+Seeded data contain account with credentials
+
+    Login: jenda.vales@seznam.cz
+    Password: asdasd
