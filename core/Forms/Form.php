@@ -1,8 +1,8 @@
 <?php
 
-namespace core;
+namespace core\Forms;
 
-use core\ValidationRules\Rule;
+use core\Forms\ValidationRules\Rule;
 
 abstract class Form
 {
@@ -20,11 +20,15 @@ abstract class Form
         return '';
     }
 
-    public function loadData(array $data): void
+    public function loadData(array $data, bool $containsPrefix = true): void
     {
         $inputsPrefix = $this->inputsPrefix();
         foreach ($data as $key => $value) {
-            $keyNoPrefix = substr($key, strlen($inputsPrefix));
+            if ($containsPrefix) {
+                $keyNoPrefix = substr($key, strlen($inputsPrefix));
+            } else {
+                $keyNoPrefix = $key;
+            }
             if (property_exists($this, $keyNoPrefix)) {
                 $this->{$keyNoPrefix} = $value;
             }
@@ -58,5 +62,10 @@ abstract class Form
     public function addError(string $field, string $value): void
     {
         $this->errors[$field][] = $value;
+    }
+
+    public function hasError(string $field): bool
+    {
+        return array_key_exists($field, $this->errors) && count($this->errors[$field]) != 0;
     }
 }

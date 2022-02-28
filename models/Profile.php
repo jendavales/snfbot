@@ -100,8 +100,19 @@ class Profile extends DbModel
 
     public function insert(): void
     {
+        $user = $this->user;
+        $this->user = $user->id;
         parent::insert();
+        $this->user = $user;
         $this->id = Application::$app->database->pdo->lastInsertId();
+    }
+
+    public function update(array $fieldsToUpdate = []): void
+    {
+        $user = $this->user;
+        $this->user = $user->id;
+        parent::update($fieldsToUpdate);
+        $this->user = $user;
     }
 
     protected function afterFetch(): void

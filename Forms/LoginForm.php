@@ -2,8 +2,8 @@
 
 namespace Forms;
 
-use core\Form;
-use Forms\ValidationRules\RequiredRule;
+use core\Forms\Form;
+use core\Forms\ValidationRules\RequiredRule;
 
 class LoginForm extends Form
 {
@@ -13,7 +13,7 @@ class LoginForm extends Form
     public function rules(): array
     {
         return [
-            new RequiredRule('email',),
+            new RequiredRule('email'),
             new RequiredRule('password'),
         ];
     }

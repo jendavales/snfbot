@@ -1,9 +1,8 @@
 <?php
 
-namespace Forms\ValidationRules;
+namespace core\Forms\ValidationRules;
 
-use core\Form;
-use core\Rule;
+use core\Forms\Form;
 
 class RequiredRule extends Rule
 {

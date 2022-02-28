@@ -2,9 +2,9 @@
 
 namespace Forms;
 
-use core\Form;
-use Forms\ValidationRules\NotNullRule;
-use Forms\ValidationRules\RequiredRule;
+use core\Forms\Form;
+use core\Forms\ValidationRules\NotNullRule;
+use core\Forms\ValidationRules\RequiredRule;
 
 class ProfileEditForm extends Form
 {
@@ -28,7 +28,7 @@ class ProfileEditForm extends Form
         return 'profile_';
     }
 
-    public function loadData(array $data): void
+    public function loadData(array $data, bool $containsPrefix = true): void
     {
         parent::loadData($data);
 

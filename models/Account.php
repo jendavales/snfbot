@@ -67,7 +67,7 @@ class Account extends DbModel
         return round($this->actualXp / $this->xpNeeded * 100, $decimals);
     }
 
-    public function update(): void
+    public function update(array $fieldsToUpdate = []): void
     {
         $profile = $this->profile;
         $user = $this->user;

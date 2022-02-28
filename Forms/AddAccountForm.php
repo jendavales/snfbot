@@ -2,7 +2,7 @@
 
 namespace Forms;
 
-use core\Form;
+use core\Forms\Form;
 
 class AddAccountForm extends Form
 {

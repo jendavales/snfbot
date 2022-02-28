@@ -2,10 +2,10 @@
 
 namespace Forms;
 
-use core\Form;
-use Forms\ValidationRules\LengthRule;
-use Forms\ValidationRules\RequiredRule;
-use Forms\ValidationRules\SameAsRule;
+use core\Forms\Form;
+use core\Forms\ValidationRules\LengthRule;
+use core\Forms\ValidationRules\RequiredRule;
+use core\Forms\ValidationRules\SameAsRule;
 
 class RegistrationForm extends Form
 {

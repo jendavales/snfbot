@@ -10,21 +10,23 @@ class Route
     private $functionName;
     private $parameters;
     private $regex;
+    private $canBePublic;
 
-    public function __construct(string $path, array $methods, string $controller, string $function)
+    public function __construct(string $path, array $methods, string $controller, string $function, bool $canBePublic = true)
     {
         $this->path = $path;
         $this->controller = $controller;
         $this->functionName = $function;
         $this->methods = $methods;
         $this->parameters = [];
+        $this->canBePublic = $canBePublic;
 
-        $count = preg_match_all('/{([0-9a-zA-Z]*)}/', $path, $variableNames);
+        $count = preg_match_all('/{([0-9a-zA-Z]+)}/', $path, $variableNames);
         $regex = $path;
 
         for ($i = 0; $i < $count; $i++) {
             $this->parameters[] = $variableNames[1][$i];
-            $regex = str_replace($variableNames[0][$i], '([0-9a-zA-Z]*)', $regex);
+            $regex = str_replace($variableNames[0][$i], '([0-9a-zA-Z]+)', $regex);
         }
 
         $this->regex = '~^' . $regex . '$~';
@@ -38,7 +40,7 @@ class Route
 
         $url = $this->path;
         foreach ($parameters as $name => $value) {
-            $url = str_replace('{'.$name.'}', $value, $url);
+            $url = str_replace('{' . $name . '}', $value, $url);
         }
 
         if (!$absolute) {
@@ -74,5 +76,10 @@ class Route
             'regex' => $this->getRegex(),
             'path' => $this->path
         ];
+    }
+
+    public function canBePublic(): bool
+    {
+        return $this->canBePublic;
     }
 }

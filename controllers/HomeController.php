@@ -8,7 +8,7 @@ use core\Request;
 use core\Session;
 use Forms\AddAccountForm;
 use Middlewares\LoginMiddleware;
-use Models\Account;
+use models\Account;
 use models\Bot\Bot;
 use Models\Profile;
 
@@ -22,7 +22,7 @@ class HomeController extends Controller
 
     public function home()
     {
-        $user = Application::$app->user;
+        $user = Application::$app->getUser();
         $accounts = Account::fetchAll(['user' => $user->id]);
 
         return $this->render('home', [
@@ -36,8 +36,8 @@ class HomeController extends Controller
 
     public function addAccountAction(Request $request)
     {
-        $accounts = Account::fetchAll(['user' => Application::$app->user->id]);
-        if (Application::$app->user->accountsLimit <= count($accounts)) {
+        $accounts = Account::fetchAll(['user' => Application::$app->getUser()->id]);
+        if (Application::$app->getUser()->accountsLimit <= count($accounts)) {
             Application::$app->session->setFlash(Session::FLASH_WARNING, 'Pro přidání více účtů zaplať');
             Application::$app->response->redirect('home');
         }
@@ -61,7 +61,7 @@ class HomeController extends Controller
             $account->actualXp = 9;
             //END LOAD DATA
             $account->profile = null;
-            $account->user = Application::$app->user->id;
+            $account->user = Application::$app->getUser()->id;
             $account->insert();
         }
 
