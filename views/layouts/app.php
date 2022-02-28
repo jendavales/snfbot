@@ -39,6 +39,24 @@
         </li>
     </ul>
 </nav>
+<!--todo: move to own component-->
+<?php foreach (\core\Application::$app->session->getFlashMessages(\core\Session::FLASH_FAILURE) as $message): ?>
+    <div class="alert alert-danger w-75 ml-auto mr-auto mt-2">
+        <?php echo $message ?>
+    </div>
+<?php endforeach; ?>
+
+<?php foreach (\core\Application::$app->session->getFlashMessages(\core\Session::FLASH_WARNING) as $message): ?>
+    <div class="alert alert-warning w-75 ml-auto mr-auto mt-2">
+        <?php echo $message ?>
+    </div>
+<?php endforeach; ?>
+
+<?php foreach (\core\Application::$app->session->getFlashMessages(\core\Session::FLASH_SUCCESS) as $message): ?>
+    <div class="alert alert-success w-75 ml-auto mr-auto mt-2">
+        <?php echo $message ?>
+    </div>
+<?php endforeach; ?>
 {{content}}
 </body>
 <script src="<?php echo $GLOBALS['params']['server_subdirectory'] ?>/assets/params.js"></script>

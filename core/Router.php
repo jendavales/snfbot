@@ -2,8 +2,6 @@
 
 namespace core;
 
-use controllers\IndexController;
-
 class Router
 {
     const HTTP_NOT_FOUND = 404;
@@ -28,9 +26,7 @@ class Router
         $method = $this->request->getMethod();
         $callback = $this->getCallback($method, $path);
         if (is_null($callback)) {
-            //todo: return 404;
-            Application::$app->response->setStatusCode(self::HTTP_NOT_FOUND);
-            vdx('404');
+            throw new NotFoundException();
         }
 
         return $callback;
@@ -40,8 +36,9 @@ class Router
     {
         $pathNoQuery = $this->getPathNoQuery($path);
 
-        foreach ($this->routes as $route) {
+        foreach ($this->routes as $routeName => $route) {
             if (preg_match_all($route->getRegex(), $pathNoQuery, $parameters) && $route->hasMethod($method)) {
+                Application::$app->request->setCurrentRouteName($routeName);
                 $callback = $route->getCallback();
                 if (count($parameters) === 1) {
                     return $callback;

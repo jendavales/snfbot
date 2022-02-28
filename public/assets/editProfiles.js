@@ -63,7 +63,6 @@ if (document.getElementById('profilesModal') !== null) {
                 option = document.createElement('option');
                 option.value = id;
                 profileInputs[PROFILE_INPUTS_PREFIX + 'id'].value = id;
-                console.log(profileInputs[PROFILE_INPUTS_PREFIX + 'id'].value);
                 profileSelect.insertBefore(option, profileSelect.lastElementChild);
                 profileSelect.value = id;
                 profileOptions[PROFILE_OPTIONS_PREFIX + id] = option;
@@ -73,7 +72,6 @@ if (document.getElementById('profilesModal') !== null) {
             let settings = createCurrentInputSettings();
             option.innerHTML = profileInputs[PROFILE_INPUTS_PREFIX + 'name'].value;
             option.dataset.settings = JSON.stringify(settings);
-            console.log(settings);
             pause.stop();
         }, () => {
             pause.stop();

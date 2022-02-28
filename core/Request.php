@@ -7,6 +7,9 @@ class Request
     public const METHOD_POST = 'POST';
     public const METHOD_GET = 'GET';
 
+    private $urlParameters;
+    private $currentRouteName;
+
     public function getPath(): string
     {
         $path = $_SERVER['REQUEST_URI'];
@@ -21,7 +24,7 @@ class Request
             return $path;
         }
 
-        return $path;
+        return substr($path,0, $paramPos);
     }
 
     public function getMethod(): string
@@ -44,11 +47,8 @@ class Request
         $data = [];
 
         if ($this->isGet()) {
-            foreach ($_GET as $key => $value) {
-                $data[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-            }
-
-            return $data;
+            $return = filter_input_array(INPUT_GET, FILTER_SANITIZE_SPECIAL_CHARS);
+            return is_null($return) ? [] : $return;
         }
 
         if ($this->isPost() && $_SERVER['CONTENT_TYPE'] === 'application/json') {
@@ -56,15 +56,30 @@ class Request
             foreach ($_POST as $key => $value) {
                 $data[$key] = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS);
             }
-
             return $data;
         }
 
-        //ASSUME IS NON-JSON POST
-        foreach ($_POST as $key => $value) {
-            $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-        }
+        $return = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
+        return is_null($return) ? [] : $return;
+    }
 
-        return $data;
+    public function setUrlParameters(array $parameters): void
+    {
+        $this->urlParameters = $parameters;
+    }
+
+    public function getUrlParameters(): array
+    {
+        return $this->urlParameters;
+    }
+
+    public function getCurrentRouteName(): string
+    {
+        return $this->currentRouteName;
+    }
+
+    public function setCurrentRouteName(string $currentRoute): void
+    {
+        $this->currentRouteName = $currentRoute;
     }
 }

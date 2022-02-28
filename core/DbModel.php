@@ -10,6 +10,10 @@ abstract class DbModel extends Model
 
     abstract public static function primaryKeys(): array;
 
+    protected function afterFetch(): void
+    {
+    }
+
     public function insert(): void
     {
         $tableName = $this->tableName();
@@ -33,22 +37,36 @@ abstract class DbModel extends Model
         $query->execute();
     }
 
-    public function update(): void
+    public function update(array $fieldsToUpdate = []): void
     {
         $tableName = static::tableName();
 
+        if (count($fieldsToUpdate) == 0) {
+            $fieldsToUpdate = $this->dbAttributes();
+        }
         $setValues = [];
-        foreach ($this->dbAttributes() as $attribute) {
-            $setValues[] = "$attribute = \"" . $this->{$attribute}.'"';
+        foreach ($fieldsToUpdate as $attribute) {
+            $setValues[] = "$attribute = " . (is_null($this->{$attribute}) ? 'null' : ":$attribute");
         }
 
         $whereValues = [];
         foreach ($this->primaryKeys() as $attribute) {
-            $whereValues[] = "$attribute = " . $this->{$attribute};
+            $whereValues[] = "$attribute = :$attribute";
         }
 
         $sql = "UPDATE $tableName SET " . implode(',', $setValues) . ' WHERE ' . implode(',', $whereValues);
         $query = Application::$app->database->pdo->prepare($sql);
+
+        foreach ($fieldsToUpdate as $attribute) {
+            if (is_null($this->{$attribute})) {
+                continue;
+            }
+
+            $query->bindValue(":$attribute", $this->{$attribute});
+        }
+        foreach ($this->primaryKeys() as $attribute) {
+            $query->bindValue(":$attribute", $this->{$attribute});
+        }
 
         $query->execute();
     }
@@ -59,20 +77,30 @@ abstract class DbModel extends Model
         $tableName = static::tableName();
 
         if (empty($fetchBy)) {
-            $id = $this->id;
-            $whereCond = "WHERE id = $id";
+            $whereCond = "WHERE id = :id";
         } else {
             $conditions = [];
             foreach ($fetchBy as $key => $value) {
-                $conditions[] = "$key = \"$value\"";
+                $conditions[] = "$key = :$key";
             }
 
             $whereCond = "WHERE " . implode(' and ', $conditions);
         }
 
         $sql = "SELECT " . implode(', ', $selectParams) . " FROM $tableName " . $whereCond;
-        $result = Application::$app->database->pdo->query($sql)->fetch(\PDO::FETCH_ASSOC);
+        $query = Application::$app->database->pdo->prepare($sql);
 
+        if (empty($fetchBy)) {
+            $query->bindValue(':id', $this->id);
+        } else {
+            foreach ($fetchBy as $key => $value) {
+                $query->bindValue(":$key", $value);
+            }
+        }
+
+        $query->execute();
+
+        $result = $query->fetch(\PDO::FETCH_ASSOC);
         if ($result === false) {
             return;
         }
@@ -80,32 +108,80 @@ abstract class DbModel extends Model
         foreach ($result as $key => $value) {
             $this->{$key} = $value;
         }
+        $this->afterFetch();
     }
 
-    public static function fetchAll(array $fetchBy, array $additionalFields = ['id']): array
+    public static function fetchAll(array $fetchBy = [], array $additionalFields = ['id'], ?OrderBy $order = null, ?Limit $limit = null): array
     {
         $selectParams = array_merge(static::dbAttributes(), $additionalFields);
         $tableName = static::tableName();
 
         $conditions = [];
         foreach ($fetchBy as $key => $value) {
-            $conditions[] = "$key = \"$value\"";
+            $conditions[] = "$key = :$key";
         }
 
         $whereCond = "WHERE " . implode(' and ', $conditions);
 
-        $sql = "SELECT " . implode(', ', $selectParams) . " FROM $tableName " . $whereCond;
-        $results = Application::$app->database->pdo->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        $sql = "SELECT " . implode(', ', $selectParams) . " FROM $tableName " . (count($fetchBy) > 0 ? $whereCond : '');
 
+        if (!is_null($order)) {
+            $sql .= " ORDER BY $order->orderBy $order->orderDir";
+        }
+
+        if (!is_null($limit)) {
+            $sql .= " LIMIT $limit->limit";
+        }
+
+        $query = Application::$app->database->pdo->prepare($sql);
+
+        foreach ($fetchBy as $key => $value) {
+            $query->bindValue(":$key", $value);
+        }
+
+        $query->execute();
+        $results = $query->fetchAll(\PDO::FETCH_ASSOC);
         if ($results === false) {
             return [];
         }
 
         $return = [];
         foreach ($results as $result) {
-            $return[] = new static($result);
+            $model = new static($result);
+            $model->afterFetch();
+            $return[] = $model;
         }
 
         return $return;
+    }
+
+    public function delete(array $deleteBy = [])
+    {
+        $tableName = static::tableName();
+        $conditions = [];
+
+        if (empty($deleteBy)) {
+            $deleteBy = ['id' => $this->id];
+        }
+
+        foreach ($deleteBy as $key => $value) {
+            $conditions[] = "$key = :$key";
+        }
+
+        $sql = "DELETE FROM $tableName WHERE " . implode($conditions);
+        $query = Application::$app->database->pdo->prepare($sql);
+
+        foreach ($deleteBy as $key => $value) {
+            $query->bindValue(":$key", $value);
+        }
+
+        $query->execute();
+    }
+
+    public static function getNewestId(): int
+    {
+        $tableName = static::tableName();
+        $sql = "SELECT id FROM $tableName ORDER BY ID DESC LIMIT 1";
+        return Application::$app->database->pdo->query($sql)->fetchColumn();
     }
 }

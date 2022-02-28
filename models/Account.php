@@ -6,7 +6,6 @@ use core\DbModel;
 
 class Account extends DbModel
 {
-    public const PROFILE_NONE = 'none';
     private const OUTFLIT_DELIMETER = ';';
 
     public $id;
@@ -40,7 +39,10 @@ class Account extends DbModel
     public function fetch(array $fetchBy = [], array $additionalFields = ['id']): void
     {
         parent::fetch($fetchBy, $additionalFields);
+    }
 
+    protected function afterFetch(): void
+    {
         $this->user = new User(['id' => $this->user]);
         $this->user->fetch();
 
@@ -65,4 +67,28 @@ class Account extends DbModel
         return round($this->actualXp / $this->xpNeeded * 100, $decimals);
     }
 
+    public function update(array $fieldsToUpdate = []): void
+    {
+        $profile = $this->profile;
+        $user = $this->user;
+        $this->user = is_null($user) ? null : $user->id;
+        $this->profile = is_null($profile) ? null : $profile->id;
+        parent::update();
+        $this->user = $user;
+        $this->profile = $profile;
+    }
+
+    public function getProfile(): Profile
+    {
+        return $this->profile;
+    }
+
+    public function getProfileId(): ?int
+    {
+        if (is_null($this->profile)) {
+            return null;
+        }
+
+        return $this->profile->id;
+    }
 }

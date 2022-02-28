@@ -4,6 +4,7 @@ function vd() {
     foreach (func_get_args() as $var) {
         var_dump($var);
     }
+    echo'<br>';
 }
 
 function vdx() {

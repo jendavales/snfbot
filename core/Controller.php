@@ -2,8 +2,6 @@
 
 namespace core;
 
-use core\Application;
-
 class Controller
 {
     private $middlewares;

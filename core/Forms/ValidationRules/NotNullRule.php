@@ -1,11 +1,8 @@
 <?php
 
+namespace core\Forms\ValidationRules;
 
-namespace Forms\ValidationRules;
-
-
-use core\Form;
-use core\Rule;
+use core\Forms\Form;
 
 class NotNullRule extends Rule
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace core;
+namespace core\Forms\ValidationRules;
 
-use core\Form;
+use core\Forms\Form;
 
 abstract class Rule
 {

@@ -2,10 +2,11 @@
 
 namespace core;
 
-use controllers\IndexController;
+use controllers\ErrorController;
 
 class Application
 {
+    private const ERROR_LOG = '../var/error_log.txt';
     public static $app;
     public $router;
     public $request;
@@ -13,7 +14,7 @@ class Application
     public $rootPath;
     public $database;
     public $session;
-    public $user;
+    private $user;
     public $userClass;
 
     public function __construct(string $rootPath)
@@ -28,37 +29,48 @@ class Application
         $this->rootPath = $rootPath;
         $this->user = null;
 
-        $userId = Application::$app->session->get('user');
-        if ($userId) {
-            $primaryKeys = unserialize($userId);
-            $this->user = new $this->userClass();
-            $this->user->loadPropertiesFromArray($primaryKeys);
-            $this->user->fetch();
+        try {
+            $userId = Application::$app->session->get('user');
+            if ($userId) {
+                $primaryKeys = unserialize($userId);
+                $this->user = new $this->userClass();
+                $this->user->loadPropertiesFromArray($primaryKeys);
+                $this->user->fetch();
+            }
+        } catch (\Error | \Exception $e) {
+            $this->handleError($e->getMessage() . " in " . $e->getFile(), Response::ERROR);
         }
     }
 
     public function run(): void
     {
-        $callback = $this->router->resolve();
-
-        $controller = $callback->getController();
-        $middlewares = $controller->getMiddlewares();
-        /** @var Middleware $middleware */
-        foreach ($middlewares as $middleware) {
-            if (!$middleware->verify()) {
-                $middleware->handleFailure();
+        try {
+            $callback = $this->router->resolve();
+            $this->request->setUrlParameters($callback->getParameters());
+            $controllerClass = $callback->getControllerClass();
+            $controller = new $controllerClass();
+            $middlewares = $controller->getMiddlewares();
+            /** @var Middleware $middleware */
+            foreach ($middlewares as $middleware) {
+                if (!$middleware->verify()) {
+                    $middleware->handleFailure();
+                }
             }
+
+            $callback->addParameter('request', $this->request);
+
+            echo call_user_func_array([$controller, $callback->getFunctionName()], $this->getOrderedParams($callback, $controller));
+            $this->session->setLastUrl($_SERVER['REQUEST_URI']);
+        } catch (NotFoundException $e) {
+            $this->handleError('', Response::NOT_FOUND);
+        } catch (\Error | \Exception $e) {
+            $this->handleError($e->getMessage() . " in " . $e->getFile() . " on " . $e->getLine(), Response::ERROR);
         }
-
-
-        $callback->addParameter('request', $this->request);
-
-        echo call_user_func_array([$controller, $callback->getFunctionName()], $this->getOrderedParams($callback));
     }
 
-    private function getOrderedParams(Callback $callback): array
+    private function getOrderedParams(Callback $callback, Controller $controller): array
     {
-        $method = new \ReflectionMethod($callback->getController(), $callback->getFunctionName());
+        $method = new \ReflectionMethod($controller, $callback->getFunctionName());
         $orderedParams = [];
 
         foreach ($method->getParameters() as $parameter) {
@@ -85,8 +97,45 @@ class Application
     }
 
     //returns user class set in config or null
-    public function getUser()
+    public function getUser(): ?DbModel
     {
         return $this->user;
+    }
+
+    public function handleError(string $message, int $code)
+    {
+        if ($code !== Response::NOT_FOUND) {
+            $stack = debug_backtrace();
+            //create stack trace
+            $output = $message . PHP_EOL . 'Stack trace:' . PHP_EOL;
+
+            $stackLen = count($stack);
+            for ($i = 1; $i < $stackLen; $i++) {
+                $entry = $stack[$i];
+
+                $func = $entry['function'] . '(';
+                $argsLen = count($entry['args']);
+                for ($j = 0; $j < $argsLen; $j++) {
+                    $func .= $entry['args'][$j];
+                    if ($j < $argsLen - 1) $func .= ', ';
+                }
+                $func .= ')';
+
+                $output .= '#' . ($i - 1) . ' ' . $entry['file'] . ':' . $entry['line'] . ' - ' . $func . PHP_EOL;
+            }
+            $output .= $_SERVER['REQUEST_URI'] . PHP_EOL;
+            if (!is_null($this->user)) {
+                $output .= $this->user->email . PHP_EOL;
+            }
+
+            file_put_contents(self::ERROR_LOG, $output . PHP_EOL, FILE_APPEND);
+            if ($GLOBALS['params']['env'] == 'dev') {
+                echo $output;
+                exit();
+            }
+        }
+        $controller = new ErrorController();
+        echo $controller->error($code);
+        exit();
     }
 }

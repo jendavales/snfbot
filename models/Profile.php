@@ -10,6 +10,7 @@ class Profile extends DbModel
     public const MAX_ADVENTURES = 60;
     public const ITEM_ACTION_DELETE = 1;
     public const ITEM_ACTION_STORE = 2;
+    public const PROFILE_NONE = 'none';
 
     public $id;
     public $name;
@@ -99,7 +100,24 @@ class Profile extends DbModel
 
     public function insert(): void
     {
+        $user = $this->user;
+        $this->user = $user->id;
         parent::insert();
+        $this->user = $user;
         $this->id = Application::$app->database->pdo->lastInsertId();
+    }
+
+    public function update(array $fieldsToUpdate = []): void
+    {
+        $user = $this->user;
+        $this->user = $user->id;
+        parent::update($fieldsToUpdate);
+        $this->user = $user;
+    }
+
+    protected function afterFetch(): void
+    {
+        $this->user = new User(['id' => $this->user]);
+        $this->user->fetch();
     }
 }
